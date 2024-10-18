@@ -26,10 +26,8 @@ contract SigVerify {
     function claimTokens(bytes32 messageHash, bytes memory signature) external {
         require(!usedHashes[messageHash], "Signature already used");
         require(whitelist[msg.sender], "Address not whitelisted");
-
         address signer = messageHash.recover(signature);
         require(signer == msg.sender, "Invalid signature");
-
         usedHashes[messageHash] = true;
         require(token.transfer(msg.sender, claimAmount), "Token transfer failed");
     }
