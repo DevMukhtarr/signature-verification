@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {Test, console} from "forge-std/Test.sol";
 import "../src/SigVerify.sol";
 import "../src/Token.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract SignatureVerificationTest is Test {
     SigVerify public verifier;
