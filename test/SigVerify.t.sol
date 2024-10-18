@@ -10,8 +10,6 @@ contract SignatureVerificationTest is Test {
     uint256 private userPrivateKey;
     address public user;
 
-
-    
     function setUpContracts() public {
         userPrivateKey = 0xA11CE;
         user = vm.addr(userPrivateKey);
@@ -25,4 +23,20 @@ contract SignatureVerificationTest is Test {
         verifier.addToWhitelist(addresses);
     }
 
+    function testSignatureVerification() public {
+        bytes32 messageHash = keccak256(abi.encodePacked("Claim tokens"));
+    
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivateKey, messageHash);
+        bytes memory signature = abi.encodePacked(r, s, v);
+
+        vm.startPrank(user);
+
+        uint256 initialBalance = token.balanceOf(user);
+
+        verifier.claimTokens(messageHash, signature);
+
+        assertEq(token.balanceOf(user), initialBalance + CLAIM_AMOUNT, "Token transfer failed");
+
+        vm.stopPrank();
+    }
 }
