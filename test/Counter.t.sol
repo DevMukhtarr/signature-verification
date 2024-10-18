@@ -2,23 +2,27 @@
 pragma solidity ^0.8.13;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Counter} from "../src/Counter.sol";
 
-contract CounterTest is Test {
-    Counter public counter;
+contract SignatureVerificationTest is Test {
+    SigVerify public verifier;
+    Token public token;
+    uint256 public constant CLAIM_AMOUNT = 100 * 10**18;
+    uint256 private userPrivateKey;
+    address public user;
 
-    function setUp() public {
-        counter = new Counter();
-        counter.setNumber(0);
+
+    
+    function setUpContracts() public {
+        userPrivateKey = 0xA11CE;
+        user = vm.addr(userPrivateKey);
+
+        token = new Token();
+        verifier = new SigVerify(address(token), CLAIM_AMOUNT);
+        token.transfer(address(verifier), 1000 * 10**18);
+
+        address[] memory addresses = new address[](1);
+        addresses[0] = user;
+        verifier.addToWhitelist(addresses);
     }
 
-    function test_Increment() public {
-        counter.increment();
-        assertEq(counter.number(), 1);
-    }
-
-    function testFuzz_SetNumber(uint256 x) public {
-        counter.setNumber(x);
-        assertEq(counter.number(), x);
-    }
 }
